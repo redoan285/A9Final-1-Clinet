@@ -12,8 +12,15 @@ const UpdateProfile = ({ user }) => {
         e.preventDefault();
         const formData = new FormData(e.target);
         const values = Object.fromEntries(formData.entries());
-      const result =  await authClient.updateUser({
-            image: values.image,
+        
+        let imageUrl = values.image;
+        if (imageUrl) {
+           const match = imageUrl.match(/https?:\/\/[^\s]+/);
+           imageUrl = match ? match[0] : imageUrl;
+        }
+
+        const result =  await authClient.updateUser({
+            image: imageUrl,
             name: values.name,
         })
         if(result.data){

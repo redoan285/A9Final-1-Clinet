@@ -7,9 +7,10 @@ import { Eye, EyeSlash } from "@gravity-ui/icons";
 import { useState } from "react";
 import { FcGoogle } from "react-icons/fc";
 import { authClient } from "@/lib/auth-client";
-import { redirect } from "next/navigation";
+import { useRouter } from "next/navigation";
 
 const LoginPage = () => {
+    const router = useRouter();
     const [isVisible, setIsVisible] = useState(false);
     const [error, setError] = useState(null);
      const formHandler = async (e) => {
@@ -28,7 +29,7 @@ const LoginPage = () => {
                     },
                     description: "Welcome back! You have successfully logged in to your healthcare portal.",
                 })
-                redirect("/")
+                router.push("/");
             }
             if(error) {
                 setError(error.message)
@@ -37,11 +38,12 @@ const LoginPage = () => {
             }
         }
 
-        const googleSignIn = async () => {
-  const data = await authClient.signIn.social({
-    provider: "google",
-  });
-};
+    const googleSignIn = async () => {
+        await authClient.signIn.social({
+            provider: "google",
+            callbackURL: "/",
+        });
+    };
     return (
         <div>
             <div className="md:w-8/10 mx-auto md:grid md:grid-cols-2 items-center md:my-6 my-3 bg-white shadow rounded-3xl ">

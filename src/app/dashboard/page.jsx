@@ -8,24 +8,64 @@ import { FaRegCalendarAlt } from "react-icons/fa";
 import { MdPerson } from "react-icons/md";
 import profile from "../../../public/profile.png"
 
+import { redirect } from "next/navigation";
+
 export const metadata = {
   title: 'Doc-Appoint Dashboard',
 }
 
 const DashboardPage =async () => {
     const session = await auth.api.getSession({
-    headers: await headers() 
-})
-  const {token} = await auth.api.getToken({
-          headers: await headers()
-      })
-  const user = session?.user
-    const res = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/bookings/${user?.id}`,{
-         headers:{
-                    authorization: `Bearer ${token}`,
-                }
+        headers: await headers() 
     });
-    const bookings = await res.json();
+    
+    let token = null;
+    try {
+        const res = await auth.api.getToken({
+            headers: await headers()
+        });
+        token = res?.token;
+    } catch (error) {
+        // ignore error
+    }
+
+    if (!session || !token) {
+        redirect('/login');
+    }
+  const user = session?.user
+  let bookings = [];
+  if (user?.id) {
+    try {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/bookings/user/${user?.id}`,{
+           headers:{
+                      authorization: `Bearer ${token}`,
+                  }
+      });
+      if (res.ok) {
+        const data = await res.json();
+        if (Array.isArray(data)) {
+          bookings = data;
+        }
+      } else {
+        console.error("Bookings fetch returned status:", res.status);
+      }
+    } catch (err) {
+      console.error("Error fetching bookings:", err);
+    }
+  }
+  
+  const getValidImage = (url) => {
+    if (!url) return profile;
+    try {
+      new URL(url);
+      return url;
+    } catch {
+      if (url.startsWith('/')) return url;
+      const match = url.match(/https?:\/\/[^\s]+/);
+      return match ? match[0] : profile;
+    }
+  };
+  const userImage = getValidImage(user?.image);
     
     return (
         <div>
@@ -70,7 +110,7 @@ const DashboardPage =async () => {
                        <div className="w-full md:w-sm bg-white rounded-3xl shadow-lg border border-gray-100 p-8 flex flex-col items-center mt-6">
   <div className="relative mb-5">
     <Image 
-      src={user?.image || profile} 
+      src={userImage} 
       alt={user?.name || "User avatar"} 
       height={120} 
       width={120} 

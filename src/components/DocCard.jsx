@@ -16,11 +16,11 @@ const DocCard = ({ doctor }) => {
                     <div className="">
                         <p className="title text-lg">{doctor.name}</p>
                         <p className="primary">{doctor.specialty}</p>
-                        <p className="text text-sm">{doctor.experience} years of experience</p>
+                        <p className="text text-sm">{String(doctor.experience || '').includes("year") ? doctor.experience : `${doctor.experience} years of experience`}</p>
                     </div>
 
                 </div>
-                <p className="text flex items-center gap-0.5 pt-1"><FaStar className="text-[#F59E0B]" /> {doctor.rating.score}</p>
+                <p className="text flex items-center gap-0.5 pt-1"><FaStar className="text-[#F59E0B]" /> {typeof doctor?.rating === 'object' ? doctor.rating?.score : doctor?.rating}</p>
             </div>
             <div className="pt-6">
                 <p className="text flex items-center gap-1"><FiMapPin /> {doctor.hospital}

@@ -4,17 +4,17 @@ import { Bars, Pencil, SquarePlus, TrashBin } from "@gravity-ui/icons";
 import { Avatar, Description, Dropdown, Header, Kbd, Label, Separator } from "@heroui/react";
 import { Button } from "@heroui/react";
 import Link from "next/link";
-import { redirect, usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { FaBriefcaseMedical } from "react-icons/fa";
 
 const Navbar = () => {
     const pathname = usePathname();
-    const userData = authClient.useSession()
-        const user = userData?.data?.user
+    const router = useRouter();
+    const userData = authClient.useSession();
+    const user = userData?.data?.user;
     const logoutHandler = async () => {
-        await authClient.signOut()
-        redirect('/')
-        
+        await authClient.signOut();
+        router.push('/');
     }
 
     

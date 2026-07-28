@@ -19,7 +19,7 @@ const TopRated = async() => {
                 </Link>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-6">
-                {doctors.map(doctor=><DocCard key={doctor._id} doctor={doctor}></DocCard>)}
+                {doctors?.map(doctor=><DocCard key={doctor._id} doctor={doctor}></DocCard>)}
             </div>
 
         </div>
